@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/btcsuite/btcec"
 	"github.com/btcsuite/btcnet"
@@ -52,19 +53,43 @@ func generateAddr(pub *btcec.PublicKey) *btcutil.AddressPubKeyHash {
 
 func main() {
 
-	// In order to recieve coins we must generate a public/private key pair.
-	pub, priv := generateKeyPair()
+	//In order to recieve coins we must generate a public/private key pair.
+	//pub, priv := generateKeyPair()
+	generateVanityAddress("ANAT")
+	//
+	// fmt.Printf("THis is the vanityAddrss:\t[%s]\n", ad.String())
+	//
+	// // To use this address we must store our private key somewhere. Everything
+	// // else can be recovered from the private key.
+	// fmt.Printf("This is a private key in hex:\t[%s]\n",
+	// 	hex.EncodeToString(priv.Serialize()))
+	//
+	// fmt.Printf("This is a public key in hex:\t[%s]\n",
+	// 	hex.EncodeToString(pub.SerializeCompressed()))
+	//
+	// addr := generateAddr(pub)
+	//
+	// // Output the bitcoin address derived from the public key
+	// fmt.Printf("This is the associated Bitcoin address:\t[%s]\n", addr.String())
+	//
 
-	// To use this address we must store our private key somewhere. Everything
-	// else can be recovered from the private key.
-	fmt.Printf("This is a private key in hex:\t[%s]\n",
-		hex.EncodeToString(priv.Serialize()))
+}
 
-	fmt.Printf("This is a public key in hex:\t[%s]\n",
-		hex.EncodeToString(pub.SerializeCompressed()))
+func generateVanityAddress(pattern string) (*btcec.PublicKey, *btcec.PrivateKey) {
 
-	addr := generateAddr(pub)
+	for {
+		pub, priv := generateKeyPair()
 
-	// Output the bitcoin address derived from the public key
-	fmt.Printf("This is the associated Bitcoin address:\t[%s]\n", addr.String())
+		addr := generateAddr(pub)
+
+		if strings.Contains(addr.String(), pattern) {
+			fmt.Printf("This is a private key in hex:\t[%s]\n", hex.EncodeToString(priv.Serialize()))
+
+			fmt.Printf("This is a public key in hex:\t[%s]\n", hex.EncodeToString(pub.SerializeCompressed()))
+			fmt.Printf("This is the associated Bitcoin address:\t[%s]\n", addr.String())
+			return pub, priv
+		}
+
+	}
+
 }
